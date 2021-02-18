@@ -73,9 +73,13 @@ public class Biblioteca {
  */
 	private static void mostrarLibros() {
 
-		for (Libro l : libros)
-			System.out.println(l);
-
+		libros
+		.stream()
+		.forEach(System.out::println);
+//		
+//		for (Libro l :libros) {
+//			System.out.println(l);
+//		}
 	}
 	
 	/**
@@ -112,6 +116,10 @@ public class Biblioteca {
 		System.out.println("Socio eliminado");
 
 	}
+	/**
+	 * Atiende una petición de prestamo, añadiendolo a los prestamos del socio,
+	 *  y actualizando el estado del libro prestado
+	 */
 
 	private static void atenderPeticion() {
 		System.out.print("introduzca su carne de socio:");
@@ -125,34 +133,23 @@ public class Biblioteca {
 		System.out.print("Titulo del libro que quiere:");
 		String titulo = sc.nextLine();
 
-		// Coger el libro que me han dicho y el socio y cambiarle un atributo, añadir el
+		// Coger el libro que me han dicho y el socio y: cambiarle un atributo, añadir el
 		// libro.
 
-		libros.stream().filter(l -> l.getTitulo().equals(titulo) && l.getPrestadoA() == null).findAny()
-				.ifPresentOrElse(l -> {
+		libros.stream()
+		.filter(l -> l.getTitulo().equals(titulo) && l.getPrestadoA() == null)
+		.findAny()
+		.ifPresentOrElse(l -> {
 					socio.addLibro(l);
 					l.setPrestadoA(socio);
 					System.out.println("Prestamo realizado");
-				}, () -> System.out.println("No hay ninguna copia disponible"));
-
-//		for (Libro l : libros) {
-//
-//			if (l.getTitulo().equals(titulo)) {
-//				if (l.getPrestadoA() == null) {
-//					socio.addLibro(l);
-//					l.setPrestadoA(socio);
-//					System.out.println("Prestamo realizado");
-//					return;
-//
-//				} else {
-//					System.out.println("copia encontrada,pero prestada a " + l.getPrestadoA().getNombre());
-//
-//				}
-//
-//			}
-//		}
+				},//else:
+				() -> System.out.println("No hay ninguna copia disponible"));
 
 	}
+	/**
+	 * Añade un libro a la biblioteca
+	 */
 
 	private static void insertarLibro() {
 
@@ -164,6 +161,9 @@ public class Biblioteca {
 		libros.add(new Libro(titulo, autor));
 
 	}
+	/**
+	 * Añade un socio a la biblioteca
+	 */
 
 	private static void insertarSocio() {
 		System.out.print("Introduzca el nombre: ");
@@ -172,6 +172,7 @@ public class Biblioteca {
 		Socio socio = new Socio(nombre);
 		socios.put(socio.getnCarnet(), socio);
 	}
+	
 
 	private static void menu() {
 
