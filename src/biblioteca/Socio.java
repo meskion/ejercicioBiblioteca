@@ -10,6 +10,10 @@ public class Socio {
 	static int codigo = 0;
 	private List<Libro> prestados;
 
+	public List<Libro> getPrestados() {
+		return prestados;
+	}
+
 	public Socio(String nombre) {
 		super();
 		this.nombre = nombre;

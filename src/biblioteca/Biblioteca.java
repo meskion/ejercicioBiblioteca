@@ -1,10 +1,13 @@
 package biblioteca;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Biblioteca {
 
@@ -102,15 +105,15 @@ public class Biblioteca {
 		 * biblioteca para que dejen de estar prestados
 		 */
 
-		libros.parallelStream()
-		.filter(l -> l.getPrestadoA().equals(socio))
-		.forEach(l -> l.setPrestadoA(null));
+//		libros.parallelStream()
+//		.filter(l -> l.getPrestadoA().equals(socio))
+//		.forEach(l -> l.setPrestadoA(null));
 
-//			for (Libro l : libros) {
-//				if (l.getPrestadoA().equals(socio)) {
-//					l.setPrestadoA(null);
-//				}
-//			}
+			for (Libro l : libros) {
+				if (l.getPrestadoA().equals(socio)) {
+					l.setPrestadoA(null);
+				}
+			}
 
 		socios.remove(carne, socio);
 		System.out.println("Socio eliminado");
@@ -133,18 +136,49 @@ public class Biblioteca {
 		System.out.print("Titulo del libro que quiere:");
 		String titulo = sc.nextLine();
 
-		// Coger el libro que me han dicho y el socio y: cambiarle un atributo, añadir el
-		// libro.
+		
+		List<Libro> listaCopias =
+				libros.stream()
+				.filter(l->titulo.equals(l.getTitulo()))
+				.collect(Collectors.toList());
+		
 
-		libros.stream()
-		.filter(l -> l.getTitulo().equals(titulo) && l.getPrestadoA() == null)
-		.findAny()
-		.ifPresentOrElse(l -> {
-					socio.addLibro(l);
-					l.setPrestadoA(socio);
-					System.out.println("Prestamo realizado");
-				},//else:
-				() -> System.out.println("No hay ninguna copia disponible"));
+	
+		Map<Boolean, List<Libro>> mapaPrestados = listaCopias.stream().collect(Collectors.groupingBy(l -> l.getPrestadoA() != null));
+		List<Libro> sinPrestar  = mapaPrestados.get(false);
+		
+		if (!listaCopias.stream().findAny().isEmpty()){
+			
+			if (sinPrestar != null) {
+				Libro l = sinPrestar.stream().findAny().get();
+				l.setPrestadoA(socio);
+				socio.addLibro(l);
+
+				System.out.println("Prestamo realizado");
+			} else {
+				
+				System.out.println("Hay copias pero estan prestadas a ");
+			
+				mapaPrestados.get(true)
+				.stream()
+				.forEach(l->System.out.println(l.getPrestadoA().getNombre()));
+				
+			}
+		} else {
+			System.out.println("No hay copias disponibles");
+		}
+		
+	
+		
+//		libros.stream()
+//		.filter(l -> l.getTitulo().equals(titulo) && l.getPrestadoA() == null)
+//		.findAny()
+//		.ifPresentOrElse(l -> {
+//					socio.addLibro(l);
+//					l.setPrestadoA(socio);
+//					System.out.println("Prestamo realizado");
+//				},//else:
+//				() -> System.out.println("No hay ninguna copia disponible"));
 
 	}
 	/**
